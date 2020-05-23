@@ -1,0 +1,58 @@
+version: '3.0'
+
+services:
+
+  nginx:
+    image: nginx
+    environment:
+      - VIRTUAL_HOST=test
+    depends_on:
+      - php
+    volumes:
+      - ./docker/nginx/conf.d/default.nginx:/etc/nginx/conf.d/default.conf
+      - ./html/:/var/www/html/
+    networks:
+      - frontend
+      - backend
+
+  php:
+    build:
+      context: ./docker/php
+    volumes:
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+      - ./html/:/var/www/html/
+    networks:
+      - backend
+
+  mysql:
+    image: mysql:8.0.19
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+    ports:
+      - 3306
+    environment:
+      MYSQL_DATABASE: patterns
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - backend
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - VIRTUAL_HOST=phpmyadmin
+      - PMA_HOST=mysql
+      - PMA_USER=user
+      - PMA_PASSWORD=user
+    networks:
+      - frontend
+      - backend
+
+
+networks:
+  frontend:
+    external:
+      # здесь нужно указать имя сети, которую создал nginx-proxy (посмотреть можно через docker network ls)
+      name: nginx-proxy_proxy
+  backend:
