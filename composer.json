@@ -1,0 +1,15 @@
+{
+    "name": "myskind/patterns",
+    "authors": [
+        {
+            "name": "MyskinD",
+            "email": "myskin.dmitry@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "App\\Ex1\\": "ex1/"
+        }
+    }
+}
